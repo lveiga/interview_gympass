@@ -88,6 +88,46 @@ namespace gympass.Controllers
                         .ToList();
 
 
+                List<ResultRace> incompletos = new List<ResultRace>();
+                List<ResultRace> completosRaces = new List<ResultRace>();
+
+                foreach (var piloto in pilotos)
+                {
+                    ResultRace result = new ResultRace();
+                    if(piloto.Count() < 4)
+                    {
+                        result.NomePiloto = piloto[0].NomePiloto;
+                        result.CodigoPiloto = piloto[0].NumeroPiloto;
+                        result.QtdVoltasCompletadas = piloto.Count();
+                        result.TempoTotalProva = new TimeSpan(piloto.Sum(p => p.TempoVolta.Ticks)).ToString();
+                        incompletos.Add(result);
+
+                        break;
+                    }
+
+                    result.NomePiloto = piloto[0].NomePiloto;
+                    result.CodigoPiloto = piloto[0].NumeroPiloto;
+                    result.QtdVoltasCompletadas = piloto.Count();
+                    result.TempoTotalProva = new TimeSpan(piloto.Sum(p => p.TempoVolta.Ticks)).ToString();
+
+                    completosRaces.Add(result);
+                }
+
+                completosRaces = completosRaces.OrderBy(x => x.TempoTotalProva).ToList();
+
+                for (int i = 0; i < completosRaces.Count(); i++)
+                {
+                    completosRaces[i].PosicaoChegada = i + 1;
+                }
+
+                incompletos = incompletos.OrderBy(x => x.TempoTotalProva).ToList();
+
+                for (int i = 0; i < incompletos.Count(); i++)
+                {
+                    incompletos[i].PosicaoChegada = i + 1;
+                }
+
+                completosRaces.AddRange(incompletos);
 
             }
             catch (Exception ex)
