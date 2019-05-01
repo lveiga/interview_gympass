@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewData["Title"] = "Home";
+}
+@section Head {
+    <script type="text/javascript">
+
+        function loadDefaultLog() {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: "Upload/LoadDefaultLog",
+                success: function (data) {
+                    alert("sucesso");
+                    //preencherTabela(data);
+                },
+                error: function () {
+                    alert("Erro ao carregar arquivo log padrão teste");
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+        }
+
+        function preencherTabela(data) {
+            
+        }
+
+    </script>
+}
+    <h2>Teste Gympass</h2>
+    <hr />
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <section>
+                <div class="row">
+
+                    <button class="btn btn-default" onclick="loadDefaultLog()" style="padding-left: 1%;margin-left: 1%;"> Escolher Arquivo Corrida Padrão</button>
+                </div>
+            </section>
+            <br />
+            <br />
+            <div class="row">
+                <section>
+                    <form method="post" enctype="multipart/form-data" asp-controller="Upload" asp-action="EnviarArquivo">
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <p>Enviar arquivo log de corrida: </p>
+                                <input type="file" name="arquivos" multiple />
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <input type="submit" value="Enviar Arquivo" />
+                            </div>
+                        </div>
+
+                    </form>
+                </section>
+            </div>
+        </div>
+
+    </div>
+
+    <div>
+        <table id="tableResult" class="table">
+        
+        </table>
+    </div>
+

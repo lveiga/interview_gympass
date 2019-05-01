@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewData["Title"] = "EnviarArquivo";
+}
+
+<h2>EnviarArquivo Teste GymPass</h2>
+<hr/>
+<div class="jumbotron jumbotron-fluid ">
+    <div class="container">
+        @if (ViewData["Error"] != null)
+        {
+            <h2 class="display-4"> @ViewData["Error"] </h2>
+        }
+    </div>
+    <div class="container">
+        @if (ViewData["Resultado"] != null)
+        {
+            <h2 class="display-4"> @ViewData["Resultado"] </h2>
+        }
+    </div>
+</div>
