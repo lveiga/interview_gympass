@@ -16,6 +16,8 @@ namespace gympass.Controllers
 {
     public class UploadController : Controller
     {
+        private string _mensagemErro = string.Empty;
+
         IHostingEnvironment _appEnvironment;
         public UploadController(IHostingEnvironment env)
         {
@@ -140,54 +142,41 @@ namespace gympass.Controllers
 
 
 
-        public async Task<IActionResult> EnviarArquivo(List<IFormFile> arquivos)
+        public async Task<IActionResult> EnviarArquivo(IFormFile arquivo)
         {
-            long tamanhoArquivos = arquivos.Sum(f => f.Length);
             var caminhoArquivo = Path.GetTempFileName();
 
-            foreach (var arquivo in arquivos)
+            if (!ArquivoTexto(arquivo))
+                return BadRequest(_mensagemErro);
+
+            var result = new List<string>();
+            using (var reader = new StreamReader(arquivo.OpenReadStream(), Encoding.GetEncoding("iso-8859-1")))
             {
-                //verifica se existem arquivos 
-                if (arquivo == null || arquivo.Length == 0)
-                {
-                    //retorna a viewdata com erro
-                    ViewData["Erro"] = "Error: Arquivo(s) não selecionado(s)";
-                    return View(ViewData);
-                }
-                // < define a pasta onde vamos salvar os arquivos >
-                string pasta = "Arquivos_Usuario";
-                // Define um nome para o arquivo enviado incluindo o sufixo obtido de milesegundos
-                string nomeArquivo = "Usuario_arquivo_" + DateTime.Now.Millisecond.ToString();
-                //verifica qual o tipo de arquivo : jpg, gif, png, pdf ou tmp
-                if (arquivo.FileName.Contains(".jpg"))
-                    nomeArquivo += ".jpg";
-                else if (arquivo.FileName.Contains(".gif"))
-                    nomeArquivo += ".gif";
-                else if (arquivo.FileName.Contains(".png"))
-                    nomeArquivo += ".png";
-                else if (arquivo.FileName.Contains(".pdf"))
-                    nomeArquivo += ".pdf";
-                else
-                    nomeArquivo += ".tmp";
-                //< obtém o caminho físico da pasta wwwroot >
-                string caminho_WebRoot = _appEnvironment.WebRootPath;
-                // monta o caminho onde vamos salvar o arquivo : 
-                // ~\wwwroot\Arquivos\Arquivos_Usuario\Recebidos
-                string caminhoDestinoArquivo = caminho_WebRoot + "\\Arquivos\\" + pasta + "\\";
-                // incluir a pasta Recebidos e o nome do arquivo enviado : 
-                // ~\wwwroot\Arquivos\Arquivos_Usuario\Recebidos\
-                string caminhoDestinoArquivoOriginal = caminhoDestinoArquivo + "\\Recebidos\\" + nomeArquivo;
-                //copia o arquivo para o local de destino original
-                using (var stream = new FileStream(caminhoDestinoArquivoOriginal, FileMode.Create))
-                {
-                    await arquivo.CopyToAsync(stream);
-                }
+                while (reader.Peek() >= 0)
+                    result.Add(await reader.ReadLineAsync());
             }
-            //monta a ViewData que será exibida na view como resultado do envio 
-            ViewData["Resultado"] = $"{arquivos.Count} arquivos foram enviados ao servidor, " +
-             $"com tamanho total de : {tamanhoArquivos} bytes";
-            //retorna a viewdata
+
             return View(ViewData);
+        }
+
+
+        private bool ArquivoTexto(IFormFile file)
+        {
+            bool respota = true;
+             
+            if (file == null || file.Length == 0)
+            {
+                respota = false;
+                _mensagemErro = "Nenhum Arquivo Selecionado";
+            }
+
+            if (!file.FileName.Contains(".txt"))
+            {
+                respota = false;
+                _mensagemErro = "Apenas arquivo texto";
+            }
+
+            return respota;
         }
     }
 }
