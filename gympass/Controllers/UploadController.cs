@@ -35,6 +35,7 @@ namespace gympass.Controllers
                 string[] files = System.IO.File.ReadAllLines(path, Encoding.GetEncoding("iso-8859-1"));
 
                 List<KartRacing> kartRacings = new List<KartRacing>();
+                List<ResultRace> resultadoFinalCorrida = new List<ResultRace>();
 
                 for (int i = 1; i < files.Length; i++)
                 {
@@ -89,7 +90,7 @@ namespace gympass.Controllers
 
 
                 List<ResultRace> incompletos = new List<ResultRace>();
-                List<ResultRace> completosRaces = new List<ResultRace>();
+                
 
                 foreach (var piloto in pilotos)
                 {
@@ -110,14 +111,14 @@ namespace gympass.Controllers
                     result.QtdVoltasCompletadas = piloto.Count();
                     result.TempoTotalProva = new TimeSpan(piloto.Sum(p => p.TempoVolta.Ticks)).ToString();
 
-                    completosRaces.Add(result);
+                    resultadoFinalCorrida.Add(result);
                 }
 
-                completosRaces = completosRaces.OrderBy(x => x.TempoTotalProva).ToList();
+                resultadoFinalCorrida = resultadoFinalCorrida.OrderBy(x => x.TempoTotalProva).ToList();
 
-                for (int i = 0; i < completosRaces.Count(); i++)
+                for (int i = 0; i < resultadoFinalCorrida.Count(); i++)
                 {
-                    completosRaces[i].PosicaoChegada = i + 1;
+                    resultadoFinalCorrida[i].PosicaoChegada = i + 1;
                 }
 
                 incompletos = incompletos.OrderBy(x => x.TempoTotalProva).ToList();
@@ -127,16 +128,16 @@ namespace gympass.Controllers
                     incompletos[i].PosicaoChegada = i + 1;
                 }
 
-                completosRaces.AddRange(incompletos);
+                resultadoFinalCorrida.AddRange(incompletos);
 
+                return Ok(JsonConvert.SerializeObject(resultadoFinalCorrida));
             }
             catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex.Message);
             }
-
-            return Ok(JsonConvert.SerializeObject(new KartRacing()));
         }
+
 
 
         public async Task<IActionResult> EnviarArquivo(List<IFormFile> arquivos)

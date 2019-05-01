@@ -4,15 +4,28 @@
 }
 @section Head {
     <script type="text/javascript">
+        var viewModel;
+
+        $(document).ready(function () {
+
+            viewModel = {
+                resultado: ko.observableArray([]),
+                tableVisible: ko.observable(false)
+            };
+            
+            ko.applyBindings(viewModel);
+        });
 
         function loadDefaultLog() {
-            debugger;
+            
             $.ajax({
                 type: "POST",
                 url: "Upload/LoadDefaultLog",
                 success: function (data) {
-                    alert("sucesso");
-                    //preencherTabela(data);
+                    debugger;
+                    //var myObj = JSON.parse(data)
+                    viewModel.tableVisible(true);
+                    viewModel.resultado(data);
                 },
                 error: function () {
                     alert("Erro ao carregar arquivo log padrão teste");
@@ -20,7 +33,8 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json"
             });
-        }
+            }
+        
 
         function preencherTabela(data) {
             
@@ -64,8 +78,25 @@
     </div>
 
     <div>
-        <table id="tableResult" class="table">
-        
+        <table id="tableResult" data-bind="visible: viewModel.tableVisible" class="table">
+            <thead>
+                <tr>
+                    <th>Posição Chegada</th>
+                    <th>Cód Piloto</th>
+                    <th>Nome Piloto</th>
+                    <th>Qtde Voltas Completadas</th>
+                    <th>Tempo Total de Prova</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: viewModel.resultado">
+                <tr>
+                    <td data-bind="text:PosicaoChegada"></td>
+                    <td data-bind="text:CodigoPiloto"></td>
+                    <td data-bind="text:NomePiloto"></td>
+                    <td data-bind="text:QtdVoltasCompletadas"></td>
+                    <td data-bind="text:TempoTotalProva"></td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
