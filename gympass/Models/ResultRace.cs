@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace gympass.Models
 {
-    public class ResultRace
+    public class ResultadoCorrida
     {
         public int PosicaoChegada { get; set; }
         public int CodigoPiloto { get; set; }
