@@ -77,10 +77,7 @@ namespace gympass.Controllers
 
                 return BadRequest(ex.Message);
             }
-
-           
         }
-
 
         private bool ArquivoTexto(IFormFile file)
         {
