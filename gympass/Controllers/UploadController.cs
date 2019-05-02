@@ -79,7 +79,7 @@ namespace gympass.Controllers
             }
         }
 
-        private bool ArquivoTexto(IFormFile file)
+        public bool ArquivoTexto(IFormFile file)
         {
             bool respota = true;
              
