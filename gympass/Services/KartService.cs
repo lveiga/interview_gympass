@@ -14,8 +14,6 @@ namespace gympass.Services
             return Task.FromResult(PrepararListaKart(registros)).Result;
         }
 
-       
-
         private List<KartRacing> PrepararListaKart(string[] registros)
         {
             List<KartRacing> kartRacings = new List<KartRacing>();

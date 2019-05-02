@@ -44,7 +44,6 @@ namespace gympass.Controllers
 
                 return Ok(JsonConvert.SerializeObject(await _corridaServices.ApresentarResultadoCorrida(karts)));
             }
-
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -55,21 +54,31 @@ namespace gympass.Controllers
 
         public async Task<IActionResult> EnviarArquivo(IFormFile arquivo)
         {
-            var caminhoArquivo = Path.GetTempFileName();
-
-            if (!ArquivoTexto(arquivo))
-                return BadRequest(_mensagemErro);
-
-            string[] linhasRegistroLogKart = new string[] { };
-            using (var reader = new StreamReader(arquivo.OpenReadStream(), Encoding.GetEncoding("iso-8859-1")))
+            try
             {
-                while (reader.Peek() >= 0)
-                    linhasRegistroLogKart[reader.Peek()] = (await reader.ReadLineAsync());
+                if (!ArquivoTexto(arquivo))
+                    return BadRequest(_mensagemErro);
+
+                List<string> linhasRegistroLogKart = new List<string>();
+                using (var reader = new StreamReader(arquivo.OpenReadStream(), Encoding.GetEncoding("iso-8859-1")))
+                {
+                    while (reader.Peek() >= 0)
+                        linhasRegistroLogKart.Add(await reader.ReadLineAsync());
+                }
+
+                string[] RegistrosLogKart = linhasRegistroLogKart.Select(i => i.ToString()).ToArray();
+
+                var karts = await _kartService.ObterKartLista(RegistrosLogKart);
+
+                return Ok(JsonConvert.SerializeObject(await _corridaServices.ApresentarResultadoCorrida(karts)));
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
             }
 
-            var karts = await _kartService.ObterKartLista(linhasRegistroLogKart);
-
-            return Ok(JsonConvert.SerializeObject(await _corridaServices.ApresentarResultadoCorrida(karts)));
+           
         }
 
 
