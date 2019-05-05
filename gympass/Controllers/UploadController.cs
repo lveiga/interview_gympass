@@ -52,7 +52,7 @@ namespace gympass.Controllers
 
 
 
-        public async Task<IActionResult> EnviarArquivo(IFormFile arquivo)
+        public async Task<IActionResult> UploadFile(IFormFile arquivo)
         {
             try
             {
@@ -74,28 +74,25 @@ namespace gympass.Controllers
             }
             catch (Exception ex)
             {
-
                 return BadRequest(ex.Message);
             }
         }
 
         public bool ArquivoTexto(IFormFile file)
         {
-            bool respota = true;
-             
             if (file == null || file.Length == 0)
             {
-                respota = false;
-                _mensagemErro = "Nenhum Arquivo Selecionado";
+                _mensagemErro = "Nenhum Arquivo Selecionado ou Formato Incorreto!";
+                return false;
             }
 
             if (!file.FileName.Contains(".txt"))
             {
-                respota = false;
                 _mensagemErro = "Apenas arquivo texto";
+                return false;
             }
 
-            return respota;
+            return true; ;
         }
     }
 }

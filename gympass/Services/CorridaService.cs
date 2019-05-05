@@ -16,21 +16,46 @@ namespace gympass.Services
 
         private List<ResultadoCorrida> ObterResultadoFinal(List<KartRacing> kartRacings)
         {
-            var pilotos = kartRacings.GroupBy(x => x.NumeroPiloto)
+            try
+            {
+                var pilotos = kartRacings.GroupBy(x => x.NumeroPiloto)
                     .Select(x => x.ToList())
                     .ToList();
 
-            return ObterPodioCorrida(pilotos);
+                return ObterPodioCorrida(pilotos);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao obter dados finais da corrida!");
+            }
         }
 
         private static List<ResultadoCorrida> ObterPodioCorrida(List<List<KartRacing>> pilotos)
         {
-            List<ResultadoCorrida> incompletos = new List<ResultadoCorrida>();
-            List<ResultadoCorrida> resultadoFinalCorrida = new List<ResultadoCorrida>();
+            try
+            {
+                List<ResultadoCorrida> incompletos, completos;
+                SegregarCompetidores(pilotos, out incompletos, out completos);
 
+                List<ResultadoCorrida> resultadoFinalCorrida = ClassificacaoFinal(incompletos, completos);
+
+                return resultadoFinalCorrida;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao calcular resultado final da corrida!");
+            }
+           
+        }
+
+        private static void SegregarCompetidores(List<List<KartRacing>> pilotos, out List<ResultadoCorrida> incompletos, out List<ResultadoCorrida> completos)
+        {
+            incompletos = new List<ResultadoCorrida>();
+            completos = new List<ResultadoCorrida>();
             foreach (var piloto in pilotos)
             {
                 ResultadoCorrida resultado = new ResultadoCorrida();
+
                 if (piloto.Count() < 4)
                 {
                     resultado.NomePiloto = piloto[0].NomePiloto;
@@ -47,22 +72,26 @@ namespace gympass.Services
                 resultado.QtdVoltasCompletadas = piloto.Count();
                 resultado.TempoTotalProva = new TimeSpan(piloto.Sum(p => p.TempoVolta.Ticks)).ToString();
 
-                resultadoFinalCorrida.Add(resultado);
+                completos.Add(resultado);
             }
+        }
 
-            resultadoFinalCorrida = resultadoFinalCorrida.OrderBy(x => x.TempoTotalProva).ToList();
-            int ultimaPosicao = 0;
+        private static List<ResultadoCorrida> ClassificacaoFinal(List<ResultadoCorrida> incompletos, List<ResultadoCorrida> completos)
+        {
+            var resultadoFinalCorrida = completos.OrderBy(x => x.TempoTotalProva).ToList();
+
+            int posicaoCorrida = 0;
             for (int i = 0; i < resultadoFinalCorrida.Count(); i++)
             {
                 resultadoFinalCorrida[i].PosicaoChegada = i + 1;
-                ultimaPosicao = resultadoFinalCorrida[i].PosicaoChegada;
+                posicaoCorrida = resultadoFinalCorrida[i].PosicaoChegada;
             }
 
             incompletos = incompletos.OrderBy(x => x.TempoTotalProva).ToList();
 
             for (int i = 0; i < incompletos.Count(); i++)
             {
-                incompletos[i].PosicaoChegada = ultimaPosicao + 1;
+                incompletos[i].PosicaoChegada = posicaoCorrida + 1;
             }
 
             resultadoFinalCorrida.AddRange(incompletos);

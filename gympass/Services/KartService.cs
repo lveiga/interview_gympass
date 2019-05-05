@@ -1,4 +1,5 @@
-﻿using gympass.Interfaces;
+﻿using gympass.Enums;
+using gympass.Interfaces;
 using gympass.Models;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace gympass.Services
         {
             try
             {
-                return Task.FromResult(PrepararListaKart(registros)).Result;
+                return Task.FromResult(PrepararListaKarts(registros)).Result;
             }
             catch (Exception ex)
             {
@@ -21,7 +22,7 @@ namespace gympass.Services
             }
         }
 
-        private List<KartRacing> PrepararListaKart(string[] registros)
+        private List<KartRacing> PrepararListaKarts(string[] registros)
         {
             try
             {
@@ -43,7 +44,7 @@ namespace gympass.Services
                     {
                         switch (x)
                         {
-                            case 0:
+                            case (int)FormatoArquivoCorrida.Hora:
                                 if (ContemLetras(linhasRegistros[x]))
                                     throw new Exception("Campo Hora no Formato Errado!");
 
@@ -51,18 +52,18 @@ namespace gympass.Services
                                 kart.Hora = TimeSpan.Parse(linhasRegistros[x]);
                                 break;
 
-                            case 1:
+                            case (int)FormatoArquivoCorrida.NumeroPiloto:
                                 if (ContemLetras(linhasRegistros[x]))
                                     throw new Exception("Campo NumeroPiloto no Formato Errado!");
 
                                 kart.NumeroPiloto = Convert.ToInt32(linhasRegistros[x]);
                                 break;
 
-                            case 2:
+                            case (int)FormatoArquivoCorrida.NomePiloto:
                                 kart.NomePiloto = linhasRegistros[x];
                                 break;
 
-                            case 3:
+                            case (int)FormatoArquivoCorrida.Volta:
                                 if (ContemLetras(linhasRegistros[x]))
                                     throw new Exception("Campo Volta no Formato Errado!");
 
@@ -70,7 +71,7 @@ namespace gympass.Services
                                 kart.Volta = Convert.ToInt32(linhasRegistros[x]);
                                 break;
 
-                            case 4:
+                            case (int)FormatoArquivoCorrida.TempoVolta:
                                 if (ContemLetras(linhasRegistros[x]))
                                     throw new Exception("Campo tempoVolta no Formato Errado!");
 
@@ -87,7 +88,7 @@ namespace gympass.Services
                                 kart.TempoVolta = tempoVolta;
                                 break;
 
-                            case 5:
+                            case (int)FormatoArquivoCorrida.VelocidadeMediaVolta:
                                 if(ContemLetras(linhasRegistros[x]))
                                     throw new Exception("Formato do arquivo errado!");
 
