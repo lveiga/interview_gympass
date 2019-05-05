@@ -9,6 +9,8 @@ namespace gympass.Services
 {
     public class CorridaService : ICorridaService
     {
+        private static string _mensagemErro = string.Empty;
+
         public async Task<List<ResultadoCorrida>> ApresentarResultadoCorrida(List<KartRacing> kartRacings)
         {
             return Task.FromResult(ObterResultadoFinal(kartRacings)).Result;
@@ -22,15 +24,18 @@ namespace gympass.Services
                     .Select(x => x.ToList())
                     .ToList();
 
-                return ObterPodioCorrida(pilotos);
+                return ObterClassificacaoFinal(pilotos);
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao obter dados finais da corrida!");
+                if (string.IsNullOrEmpty(_mensagemErro))
+                    throw new Exception("Erro ao obter dados finais da corrida!");
+
+                throw new Exception(_mensagemErro);
             }
         }
 
-        private static List<ResultadoCorrida> ObterPodioCorrida(List<List<KartRacing>> pilotos)
+        private static List<ResultadoCorrida> ObterClassificacaoFinal(List<List<KartRacing>> pilotos)
         {
             try
             {
@@ -41,9 +46,12 @@ namespace gympass.Services
 
                 return resultadoFinalCorrida;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("Erro ao calcular resultado final da corrida!");
+                if(string.IsNullOrEmpty(_mensagemErro))
+                    _mensagemErro = "Erro ao calcular resultado final da corrida!";
+
+                throw;
             }
            
         }
@@ -54,6 +62,14 @@ namespace gympass.Services
             completos = new List<ResultadoCorrida>();
             foreach (var piloto in pilotos)
             {
+
+                if(piloto.Count > 4)
+                {
+                    _mensagemErro = "Formato Incorreto! O piloto: " + piloto[0].NomePiloto + " Possui número de voltas além do permitido";
+                    throw new Exception();
+                }
+                    
+
                 ResultadoCorrida resultado = new ResultadoCorrida();
 
                 if (piloto.Count() < 4)

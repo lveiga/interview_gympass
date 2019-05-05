@@ -50,8 +50,6 @@ namespace gympass.Controllers
             }
         }
 
-
-
         public async Task<IActionResult> UploadFile(IFormFile arquivo)
         {
             try

@@ -10,6 +10,9 @@ namespace gympass.Services
 {
     public class KartService : IKartService
     {
+        private string colunasIncorretas = string.Empty;
+        private int colunasArquivo = 6;
+
         public async Task<List<KartRacing>> ObterKartLista(string[] registros)
         {
             try
@@ -22,94 +25,101 @@ namespace gympass.Services
             }
         }
 
-        private List<KartRacing> PrepararListaKarts(string[] registros)
+        private List<KartRacing> PrepararListaKarts(string[] registrosArquivo)
         {
             try
             {
-                List<KartRacing> kartRacings = new List<KartRacing>();
+                List<KartRacing> kartsRacing = new List<KartRacing>();
 
-                for (int i = 1; i < registros.Length; i++)
+                for (int linhaTual = 1; linhaTual < registrosArquivo.Length; linhaTual++)
                 {
-                    registros[i] = registros[i].Replace("\u0096", " ").Replace("\t\t", " ");
-                    var linhasRegistros = registros[i].Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                    registrosArquivo[linhaTual] = registrosArquivo[linhaTual].Replace("\u0096", " ").Replace("\t\t", " ");
+                    var kartRegistros = registrosArquivo[linhaTual].Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
-                    if(linhasRegistros.Length != 6)
-                    {
+                    if(kartRegistros.Length != colunasArquivo)
                         throw new Exception("Formato do arquivo errado!");
-                    }
 
-                    KartRacing kart = new KartRacing();
-
-                    for (int x = 0; x <= linhasRegistros.Length; x++)
-                    {
-                        switch (x)
-                        {
-                            case (int)FormatoArquivoCorrida.Hora:
-                                if (ContemLetras(linhasRegistros[x]))
-                                    throw new Exception("Campo Hora no Formato Errado!");
-
-
-                                kart.Hora = TimeSpan.Parse(linhasRegistros[x]);
-                                break;
-
-                            case (int)FormatoArquivoCorrida.NumeroPiloto:
-                                if (ContemLetras(linhasRegistros[x]))
-                                    throw new Exception("Campo NumeroPiloto no Formato Errado!");
-
-                                kart.NumeroPiloto = Convert.ToInt32(linhasRegistros[x]);
-                                break;
-
-                            case (int)FormatoArquivoCorrida.NomePiloto:
-                                kart.NomePiloto = linhasRegistros[x];
-                                break;
-
-                            case (int)FormatoArquivoCorrida.Volta:
-                                if (ContemLetras(linhasRegistros[x]))
-                                    throw new Exception("Campo Volta no Formato Errado!");
-
-
-                                kart.Volta = Convert.ToInt32(linhasRegistros[x]);
-                                break;
-
-                            case (int)FormatoArquivoCorrida.TempoVolta:
-                                if (ContemLetras(linhasRegistros[x]))
-                                    throw new Exception("Campo tempoVolta no Formato Errado!");
-
-
-                                TimeSpan tempoVolta;
-                                if (!TimeSpan.TryParse(linhasRegistros[x], out tempoVolta))
-                                {
-                                    if (linhasRegistros[x].Length == 8)
-                                    {
-                                        tempoVolta = TimeSpan.Parse("00:0" + linhasRegistros[x]);
-                                    }
-                                }
-
-                                kart.TempoVolta = tempoVolta;
-                                break;
-
-                            case (int)FormatoArquivoCorrida.VelocidadeMediaVolta:
-                                if(ContemLetras(linhasRegistros[x]))
-                                    throw new Exception("Formato do arquivo errado!");
-
-                                kart.VelocidadeMediaVolta = Convert.ToDouble(linhasRegistros[x]);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    kartRacings.Add(kart);
+                    kartsRacing.Add(CriarKart(kartRegistros, linhaTual));
                 }
 
-                return kartRacings;
+                return kartsRacing;
             }
             catch (Exception)
             {
-
                 throw;
             }
-            
+        }
+
+        private KartRacing CriarKart(string[] kartRegistros, int linhaAtual)
+        {
+            KartRacing kart = new KartRacing();
+
+            for (int registro = 0; registro <= kartRegistros.Length; registro++)
+            {
+                switch (registro)
+                {
+                    case (int)FormatoArquivoCorrida.Hora:
+                        if (ContemLetras(kartRegistros[registro]))
+                            throw new Exception("Campo Hora no Formato Errado!");
+
+
+                        kart.Hora = TimeSpan.Parse(kartRegistros[registro]);
+                        break;
+
+                    case (int)FormatoArquivoCorrida.NumeroPiloto:
+                        if (ContemLetras(kartRegistros[registro]))
+                            throw new Exception("Campo NumeroPiloto no Formato Errado!");
+
+                        kart.NumeroPiloto = Convert.ToInt32(kartRegistros[registro]);
+                        break;
+
+                    case (int)FormatoArquivoCorrida.NomePiloto:
+                        kart.NomePiloto = kartRegistros[registro];
+                        break;
+
+                    case (int)FormatoArquivoCorrida.Volta:
+                        if (ContemLetras(kartRegistros[registro]))
+                            throw new Exception("Campo Volta no Formato Errado!");
+
+
+                        kart.Volta = Convert.ToInt32(kartRegistros[registro]);
+                        break;
+
+                    case (int)FormatoArquivoCorrida.TempoVolta:
+                        if (ContemLetras(kartRegistros[registro]))
+                            throw new Exception("Campo tempoVolta no Formato Errado!");
+
+
+                        TimeSpan tempoVolta;
+                        if (!TimeSpan.TryParse(kartRegistros[registro], out tempoVolta))
+                        {
+                            if (kartRegistros[registro].Length == 8)
+                            {
+                                tempoVolta = TimeSpan.Parse("00:0" + kartRegistros[registro]);
+                            }
+                        }
+
+                        kart.TempoVolta = tempoVolta;
+                        break;
+
+                    case (int)FormatoArquivoCorrida.VelocidadeMediaVolta:
+                        if (ContemLetras(kartRegistros[registro]))
+                            throw new Exception("Formato do arquivo errado!");
+
+                        kart.VelocidadeMediaVolta = Convert.ToDouble(kartRegistros[registro]);
+                        break;
+                    default:
+                        break;
+                }
+
+                if(registro == colunasArquivo - 1)
+                {
+                    if (!VerificaKartEstaValido(kart))
+                        throw new Exception("Formato Incorreto! verificar linha " + (linhaAtual + 1).ToString() + "Campos: " + colunasIncorretas);
+                }
+            }
+
+            return kart;
         }
 
         private bool ContemLetras(string texto)
@@ -126,6 +136,50 @@ namespace gympass.Services
                 return true;
             else
                 return false;
+        }
+
+        private bool VerificaKartEstaValido(KartRacing kart)
+        {
+            string colunasIncorretas = string.Empty;
+
+            if(kart.Hora == new TimeSpan())
+            {
+                colunasIncorretas += "  Hora  ";
+            }
+
+            if (string.IsNullOrEmpty(kart.NomePiloto))
+            {
+                colunasIncorretas += "  NumeroPiloto  ";
+            }
+
+            if (string.IsNullOrEmpty(kart.NomePiloto))
+            {
+                colunasIncorretas += "  NomePiloto  ";
+            }
+
+            if (kart.Volta == 0)
+            {
+                colunasIncorretas += "  Volta  ";
+            }
+
+            if(kart.TempoVolta == new TimeSpan())
+            {
+                colunasIncorretas += "  TempoVolta  ";
+            }
+
+            if(kart.VelocidadeMediaVolta == 0)
+            {
+                colunasIncorretas += "  VelocidadeMediaVolta  ";
+            }
+
+            if (!string.IsNullOrEmpty(colunasIncorretas))
+            {
+                colunasIncorretas = this.colunasIncorretas;
+                return false;
+            }
+                
+
+            return true;
         }
     }
 }
