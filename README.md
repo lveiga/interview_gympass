@@ -29,7 +29,7 @@ Ao Abrir o Website você terá apenas duas opções:
 
  - Clicar no botão "Escolher Arquivo Corrida Padrão".
  
- Onde a aplicação irá realizar a leitura do arquivo contido dentro do projeto com a mesma informações passadas pelo Gypass.
+ A aplicação irá realizar a leitura do arquivo contido dentro do projeto com as mesmas informações passadas pelo Gypass. Após a leitura os resultados serão apresentados.
  
  
  
@@ -64,5 +64,5 @@ Hora                               Piloto             Nº Volta   Tempo Volta   
  
   - Escolher um arquivo para realizar o Upload, de acordo com o exemplo a cima.
   
-  Ao clicar no boão "Enviar Arquivo" os resultados serão apresentados.
+  Ao clicar no botão "Enviar Arquivo" os resultados serão apresentados.
   
