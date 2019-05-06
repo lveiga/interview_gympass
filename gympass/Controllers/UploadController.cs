@@ -19,13 +19,13 @@ namespace gympass.Controllers
     {
         private string _mensagemErro = string.Empty;
         
-        private readonly IRegistroCorridaService _kartService;
+        private readonly IRegistroCorridaService _registroService;
         private readonly ICorridaService _corridaServices;
         private readonly IBonusService _bonusService;
 
         public UploadController( IRegistroCorridaService kartService, ICorridaService corridaServices, IBonusService bonusService)
         {
-            _kartService = kartService;
+            _registroService = kartService;
             _corridaServices = corridaServices;
             _bonusService = bonusService;
         }
@@ -42,7 +42,7 @@ namespace gympass.Controllers
                 string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Files\LogDefault.txt");
                 string[] linhasRegistroLogKart = System.IO.File.ReadAllLines(path, Encoding.GetEncoding("iso-8859-1"));
 
-                var registrosCorrida = await _kartService.ObterRegistrosCorrida(linhasRegistroLogKart);
+                var registrosCorrida = await _registroService.ObterRegistrosCorrida(linhasRegistroLogKart);
 
                 var resultadoCorrida = await _corridaServices.ApresentarResultadoCorrida(registrosCorrida);
 
@@ -75,7 +75,7 @@ namespace gympass.Controllers
 
                 string[] registrosArquivo = linhasRegistroLogKart.Select(i => i.ToString()).ToArray();
 
-                var registrosCorrida = await _kartService.ObterRegistrosCorrida(registrosArquivo);
+                var registrosCorrida = await _registroService.ObterRegistrosCorrida(registrosArquivo);
 
                 var resultadoCorrida = await _corridaServices.ApresentarResultadoCorrida(registrosCorrida);
 
