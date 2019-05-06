@@ -12,9 +12,9 @@ namespace gympass.Services
         private static string _mensagemErro = string.Empty;
         private const int numeroVoltasCorrida = 4;
 
-        public async Task<List<ResultadoCorrida>> ApresentarResultadoCorrida(List<RegistroCorrida> kartRacings)
+        public async Task<List<ResultadoCorrida>> ApresentarResultadoCorrida(List<RegistroCorrida> registrosCorrida)
         {
-            return await Task.FromResult(ObterResultadoFinal(kartRacings));
+            return await Task.FromResult(ObterResultadoFinal(registrosCorrida));
         }
 
         private List<ResultadoCorrida> ObterResultadoFinal(List<RegistroCorrida> registrosCorrida)

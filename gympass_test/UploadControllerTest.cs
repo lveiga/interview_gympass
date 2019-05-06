@@ -1,5 +1,7 @@
 ﻿using gympass.Controllers;
 using gympass.Interfaces;
+using gympass.Models;
+using gympass.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -8,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace gympass_test
 {
@@ -15,23 +18,33 @@ namespace gympass_test
     public class UploadControllerTest
     {
         private Mock<ICorridaService> _corridaServiceMock;
-        private Mock<IRegistroCorridaService> _kartServiceMock;
+        private ICorridaService _corridaService;
+        private Mock<IRegistroCorridaService> _registroCorridaServiceMock;
+        private IRegistroCorridaService _registroCorridaService;
         private Mock<IBonusService> _bonusServiceMock;
+        private Mock<UploadController> _uploadMock;
 
         public UploadControllerTest()
         {
             _corridaServiceMock = new Mock<ICorridaService>();
-            _kartServiceMock = new Mock<IRegistroCorridaService>();
+            _corridaService = new CorridaService();
+            _registroCorridaServiceMock = new Mock<IRegistroCorridaService>();
             _bonusServiceMock = new Mock<IBonusService>();
+            _registroCorridaService = new RegistroCorridaService();
+            _uploadMock = new Mock<UploadController>();
         }
 
         [Test]
         public void RetornaStatusCodeSucessoDadoArquivoFormatoCorreto()
         {
-            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
-
             string[] linhas = ObterTextoLogCorridaTeste().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            _kartServiceMock.Setup(x => x.ObterRegistrosCorrida(linhas));
+            List<RegistroCorrida> registrosMock = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
+            List<ResultadoCorrida> resultadoMock = _corridaService.ApresentarResultadoCorrida(registrosMock).Result;
+
+            _registroCorridaServiceMock.Setup(x => x.ObterRegistrosCorrida(linhas)).Returns(Task.FromResult(registrosMock));
+            _corridaServiceMock.Setup(x => x.ApresentarResultadoCorrida(registrosMock)).Returns(Task.FromResult(resultadoMock));
+
+            UploadController upload = new UploadController(_registroCorridaServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
 
             var mock = ObterMockIFromFile();
             var result = upload.CarregarArquivo(mock.Object).Result;
@@ -44,7 +57,7 @@ namespace gympass_test
         [Test]
         public void RetornaStatusCodeErrorDadoNenhumArquivoParaUpload()
         {
-            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
+            UploadController upload = new UploadController(_registroCorridaServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
 
             var mock = new Mock<IFormFile>();
             var result = upload.CarregarArquivo(mock.Object).Result;
@@ -58,7 +71,7 @@ namespace gympass_test
         [Test]
         public void RetornaStatusCodeErrorDadoArquivoTiopoDiferenteDeTexto()
         {
-            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
+            UploadController upload = new UploadController(_registroCorridaServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
 
             var mock = ObterMockIFromFilePDF();
             var result = upload.CarregarArquivo(mock.Object).Result;

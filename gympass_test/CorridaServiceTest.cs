@@ -19,28 +19,26 @@ namespace gympass_test
     public class CorridaServiceTest
     {
         private Mock<ICorridaService> _corridaServiceMock;
-        private Mock<IRegistroCorridaService> _kartServiceMock;
-        private IRegistroCorridaService _kartService;
+        private Mock<IRegistroCorridaService> _registroCorridaServiceMock;
+        private IRegistroCorridaService _registroCorridaService;
         private ICorridaService _corridaService;
 
         public CorridaServiceTest()
         {
             _corridaServiceMock = new Mock<ICorridaService>();
-            _kartServiceMock = new Mock<IRegistroCorridaService>();
+            _registroCorridaServiceMock = new Mock<IRegistroCorridaService>();
             _corridaService = new CorridaService();
-            _kartService = new RegistroCorridaService();
+            _registroCorridaService = new RegistroCorridaService();
         }
 
        [Test]
        public void DeveRetornaSucessoDadoArquivoFormatoCorreto()
         {
-            List<RegistroCorrida> karts = ObterListaKartFormatoCorreto();
-            var resultado = _corridaService.ApresentarResultadoCorrida(karts).Result;
+            List<RegistroCorrida> registrosCorrida = ObterListaRegistrosFormatoCorreto();
+            var resultado = _corridaService.ApresentarResultadoCorrida(registrosCorrida).Result;
 
             Assert.IsTrue(resultado.Count > 0);
         }
-
-      
 
         [Test]
         public void DeveRetornaExcecaoDadoListaKartNula()
@@ -69,9 +67,9 @@ namespace gympass_test
             try
             {
                 string[] linhas = ObterTextoLogCorridaTesteComMaisVoltas().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-                var karts = _kartService.ObterRegistrosCorrida(linhas).Result;
+                var registros = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
 
-                var resultado = _corridaService.ApresentarResultadoCorrida(karts).Result;
+                var resultado = _corridaService.ApresentarResultadoCorrida(registros).Result;
             }
             catch (Exception ex)
             {
@@ -139,11 +137,11 @@ namespace gympass_test
                         23:54:57.757      011  S.VETTEL                          3		1:18.097			35,633";
         }
 
-        private List<RegistroCorrida> ObterListaKartFormatoCorreto()
+        private List<RegistroCorrida> ObterListaRegistrosFormatoCorreto()
         {
             string[] linhas = ObterTextoLogCorridaTeste().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            var karts = _kartService.ObterRegistrosCorrida(linhas).Result;
-            return karts;
+            var registros = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
+            return registros;
         }
 
     }
