@@ -27,7 +27,7 @@ namespace gympass.Services
 
                 return ObterClassificacaoFinal(registrosPorPilotos);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (string.IsNullOrEmpty(_mensagemErro))
                     throw new Exception("Erro ao obter dados finais da corrida!");
