@@ -6,7 +6,7 @@ https://github.com/Gympass/interview-test
 
 ## Sobre o projeto
 ------------------
-* Simples Website em .NET Core para resolver o problema proposto pelo Gympass no link a cima, para executar é preciso instalar .NET Core. Mais informações no link: https://docs.microsoft.com/pt-br/dotnet/core/
+* Simples Website em .NET Core para resolver o problema proposto pelo Gympass no link acima, para executar é preciso instalar .NET Core. Mais informações no link: https://docs.microsoft.com/pt-br/dotnet/core/
 
 ## Instruções para execução
 ------------------
