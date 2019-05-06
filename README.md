@@ -6,11 +6,11 @@ https://github.com/Gympass/interview-test
 
 Sobre o projeto
 ------------------
-* Simples Website para resolver o problema proposto pelo Gympass no link a cima, para executar é preciso instalar .NET Core. Mais informações no link: https://docs.microsoft.com/pt-br/dotnet/core/
+* Simples Website em .NET Core para resolver o problema proposto pelo Gympass no link a cima, para executar é preciso instalar .NET Core. Mais informações no link: https://docs.microsoft.com/pt-br/dotnet/core/
 
 Instruções para execução
 ------------------
-* Ao clonar o repositório é preciso ir até o diretório onde .NET Core instalado anteriormente, irá executar a aplicação. 
+* Ao clonar o repositório é preciso ir até o diretório onde iremos executar a aplicação. 
    
    No diretório raiz execute:
       
