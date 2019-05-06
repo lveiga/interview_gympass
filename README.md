@@ -6,7 +6,8 @@ https://github.com/Gympass/interview-test
 
 ## Sobre o projeto
 ------------------
-* Simples Website em .NET Core para resolver o problema proposto pelo Gympass no link acima, para executar é preciso instalar .NET Core. Mais informações no link: https://docs.microsoft.com/pt-br/dotnet/core/
+* Simples Website em .NET Core para resolver o problema proposto pelo Gympass no link acima.
+* Para executar é preciso instalar .NET Core. Mais informações no link: https://docs.microsoft.com/pt-br/dotnet/core/
 
 ## Instruções para execução
 ------------------
@@ -29,7 +30,7 @@ Ao Abrir o Website você terá apenas duas opções:
 
  - Clicar no botão "Escolher Arquivo Corrida Padrão".
  
- A aplicação irá realizar a leitura do arquivo contido dentro do projeto com as mesmas informações passadas pelo Gypass. Após a leitura os resultados serão apresentados.
+ A aplicação irá realizar a leitura do arquivo contido dentro do projeto com as mesmas informações passadas pelo Gympass. Após a leitura os resultados serão apresentados.
  
  
  
@@ -62,7 +63,7 @@ Hora                               Piloto             Nº Volta   Tempo Volta   
 ```
      
  
-  - Escolher um arquivo para realizar o Upload, de acordo com o exemplo a cima.
+  - Escolher um arquivo para realizar o upload, de acordo com o exemplo acima.
   
   Ao clicar no botão "Enviar Arquivo" os resultados serão apresentados.
   
