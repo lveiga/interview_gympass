@@ -19,13 +19,15 @@ namespace gympass.Controllers
     {
         private string _mensagemErro = string.Empty;
         
-        private readonly IKartService _kartService;
+        private readonly IRegistroCorridaService _kartService;
         private readonly ICorridaService _corridaServices;
+        private readonly IBonusService _bonusService;
 
-        public UploadController( IKartService kartService, ICorridaService corridaServices)
+        public UploadController( IRegistroCorridaService kartService, ICorridaService corridaServices, IBonusService bonusService)
         {
             _kartService = kartService;
             _corridaServices = corridaServices;
+            _bonusService = bonusService;
         }
         
         public IActionResult Index()
@@ -33,16 +35,21 @@ namespace gympass.Controllers
             return View();
         }
 
-        public async Task<IActionResult> LoadDefaultLog()
+        public async Task<IActionResult> CarregarArquivoPadrao()
         {
             try
             {
                 string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Files\LogDefault.txt");
                 string[] linhasRegistroLogKart = System.IO.File.ReadAllLines(path, Encoding.GetEncoding("iso-8859-1"));
 
-                var karts = await _kartService.ObterKartLista(linhasRegistroLogKart);
+                var registrosCorrida = await _kartService.ObterRegistrosCorrida(linhasRegistroLogKart);
 
-                return Ok(JsonConvert.SerializeObject(await _corridaServices.ApresentarResultadoCorrida(karts)));
+                var resultadoCorrida = await _corridaServices.ApresentarResultadoCorrida(registrosCorrida);
+
+                if(resultadoCorrida.Count > 0)
+                    Bonus(registrosCorrida, resultadoCorrida);
+
+                return Ok(JsonConvert.SerializeObject(resultadoCorrida));
             }
             catch (Exception ex)
             {
@@ -50,7 +57,9 @@ namespace gympass.Controllers
             }
         }
 
-        public async Task<IActionResult> UploadFile(IFormFile arquivo)
+      
+
+        public async Task<IActionResult> CarregarArquivo(IFormFile arquivo)
         {
             try
             {
@@ -64,11 +73,16 @@ namespace gympass.Controllers
                         linhasRegistroLogKart.Add(await reader.ReadLineAsync());
                 }
 
-                string[] RegistrosLogKart = linhasRegistroLogKart.Select(i => i.ToString()).ToArray();
+                string[] registrosArquivo = linhasRegistroLogKart.Select(i => i.ToString()).ToArray();
 
-                var karts = await _kartService.ObterKartLista(RegistrosLogKart);
+                var registrosCorrida = await _kartService.ObterRegistrosCorrida(registrosArquivo);
 
-                return Ok(JsonConvert.SerializeObject(await _corridaServices.ApresentarResultadoCorrida(karts)));
+                var resultadoCorrida = await _corridaServices.ApresentarResultadoCorrida(registrosCorrida);
+
+                if (resultadoCorrida.Count > 0)
+                    Bonus(registrosCorrida, resultadoCorrida);
+
+                return Ok(JsonConvert.SerializeObject(resultadoCorrida));
             }
             catch (Exception ex)
             {
@@ -91,6 +105,17 @@ namespace gympass.Controllers
             }
 
             return true; ;
+        }
+
+        private void Bonus(List<RegistroCorrida> registrosCorrida, List<ResultadoCorrida> resultadoCorrida)
+        {
+            for (int i = 0; i < resultadoCorrida.Count(); i++)
+            {
+                resultadoCorrida[i] = _bonusService.MelhorVoltaPiloto(resultadoCorrida[i], registrosCorrida);
+                resultadoCorrida[i] = _bonusService.VelocidadeMedia(resultadoCorrida[i], registrosCorrida);
+            }
+
+            resultadoCorrida[0] = _bonusService.MelhorVoltaCorrida(resultadoCorrida[0], registrosCorrida);
         }
     }
 }

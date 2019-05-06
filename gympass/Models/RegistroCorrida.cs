@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace gympass.Models
 {
-    public class KartRacing
+    public class RegistroCorrida
     {
         public TimeSpan Hora { get; set; }
         public int Volta { get; set; }

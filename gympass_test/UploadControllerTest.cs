@@ -15,24 +15,26 @@ namespace gympass_test
     public class UploadControllerTest
     {
         private Mock<ICorridaService> _corridaServiceMock;
-        private Mock<IKartService> _kartServiceMock;
+        private Mock<IRegistroCorridaService> _kartServiceMock;
+        private Mock<IBonusService> _bonusServiceMock;
 
         public UploadControllerTest()
         {
             _corridaServiceMock = new Mock<ICorridaService>();
-            _kartServiceMock = new Mock<IKartService>();
+            _kartServiceMock = new Mock<IRegistroCorridaService>();
+            _bonusServiceMock = new Mock<IBonusService>();
         }
 
         [Test]
         public void RetornaStatusCodeSucessoDadoArquivoFormatoCorreto()
         {
-            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object);
+            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
 
             string[] linhas = ObterTextoLogCorridaTeste().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            _kartServiceMock.Setup(x => x.ObterKartLista(linhas));
+            _kartServiceMock.Setup(x => x.ObterRegistrosCorrida(linhas));
 
             var mock = ObterMockIFromFile();
-            var result = upload.UploadFile(mock.Object).Result;
+            var result = upload.CarregarArquivo(mock.Object).Result;
             var okResult = result as OkObjectResult;
 
             Assert.IsNotNull(okResult);
@@ -42,10 +44,10 @@ namespace gympass_test
         [Test]
         public void RetornaStatusCodeErrorDadoNenhumArquivoParaUpload()
         {
-            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object);
+            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
 
             var mock = new Mock<IFormFile>();
-            var result = upload.UploadFile(mock.Object).Result;
+            var result = upload.CarregarArquivo(mock.Object).Result;
             var badRequestResult = result as BadRequestObjectResult;
 
             Assert.IsNotNull(badRequestResult);
@@ -56,10 +58,10 @@ namespace gympass_test
         [Test]
         public void RetornaStatusCodeErrorDadoArquivoTiopoDiferenteDeTexto()
         {
-            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object);
+            UploadController upload = new UploadController(_kartServiceMock.Object, _corridaServiceMock.Object, _bonusServiceMock.Object);
 
             var mock = ObterMockIFromFilePDF();
-            var result = upload.UploadFile(mock.Object).Result;
+            var result = upload.CarregarArquivo(mock.Object).Result;
             var badRequestResult = result as BadRequestObjectResult;
 
             Assert.IsNotNull(badRequestResult);

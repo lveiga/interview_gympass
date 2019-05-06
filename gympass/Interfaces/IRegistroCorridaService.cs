@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace gympass.Interfaces
 {
-    public interface IKartService
+    public interface IRegistroCorridaService
     {
-        Task<List<KartRacing>> ObterKartLista(string[] registros);
+        Task<List<RegistroCorrida>> ObterRegistrosCorrida(string[] registros);
     }
 }

@@ -10,21 +10,22 @@ namespace gympass.Services
     public class CorridaService : ICorridaService
     {
         private static string _mensagemErro = string.Empty;
+        private const int numeroVoltasCorrida = 4;
 
-        public async Task<List<ResultadoCorrida>> ApresentarResultadoCorrida(List<KartRacing> kartRacings)
+        public async Task<List<ResultadoCorrida>> ApresentarResultadoCorrida(List<RegistroCorrida> kartRacings)
         {
-            return Task.FromResult(ObterResultadoFinal(kartRacings)).Result;
+            return await Task.FromResult(ObterResultadoFinal(kartRacings));
         }
 
-        private List<ResultadoCorrida> ObterResultadoFinal(List<KartRacing> kartRacings)
+        private List<ResultadoCorrida> ObterResultadoFinal(List<RegistroCorrida> registrosCorrida)
         {
             try
             {
-                var pilotos = kartRacings.GroupBy(x => x.NumeroPiloto)
+                var registrosPorPilotos = registrosCorrida.GroupBy(x => x.NumeroPiloto)
                     .Select(x => x.ToList())
                     .ToList();
 
-                return ObterClassificacaoFinal(pilotos);
+                return ObterClassificacaoFinal(registrosPorPilotos);
             }
             catch (Exception ex)
             {
@@ -35,7 +36,7 @@ namespace gympass.Services
             }
         }
 
-        private static List<ResultadoCorrida> ObterClassificacaoFinal(List<List<KartRacing>> pilotos)
+        private static List<ResultadoCorrida> ObterClassificacaoFinal(List<List<RegistroCorrida>> pilotos)
         {
             try
             {
@@ -56,14 +57,14 @@ namespace gympass.Services
            
         }
 
-        private static void SegregarCompetidores(List<List<KartRacing>> pilotos, out List<ResultadoCorrida> incompletos, out List<ResultadoCorrida> completos)
+        private static void SegregarCompetidores(List<List<RegistroCorrida>> pilotos, out List<ResultadoCorrida> incompletos, out List<ResultadoCorrida> completos)
         {
             incompletos = new List<ResultadoCorrida>();
             completos = new List<ResultadoCorrida>();
             foreach (var piloto in pilotos)
             {
 
-                if(piloto.Count > 4)
+                if(piloto.Count > numeroVoltasCorrida)
                 {
                     _mensagemErro = "Formato Incorreto! O piloto: " + piloto[0].NomePiloto + " Possui número de voltas além do permitido";
                     throw new Exception();
@@ -72,7 +73,7 @@ namespace gympass.Services
 
                 ResultadoCorrida resultado = new ResultadoCorrida();
 
-                if (piloto.Count() < 4)
+                if (piloto.Count() < numeroVoltasCorrida)
                 {
                     resultado.NomePiloto = piloto[0].NomePiloto;
                     resultado.CodigoPiloto = piloto[0].NumeroPiloto;

@@ -12,5 +12,9 @@ namespace gympass.Models
         public string NomePiloto { get; set; }
         public int QtdVoltasCompletadas { get; set; }
         public string TempoTotalProva { get; set; }
+        public VelocidadeMediaTodaCorrida VelocidadeMedia { get; set; }
+        public string DiferencaChegada { get; set; }
+        public RegistroCorrida MelhorVolta { get; set; }
+        public RegistroCorrida MelhorVoltaCorrida { get; set; }
     }
 }

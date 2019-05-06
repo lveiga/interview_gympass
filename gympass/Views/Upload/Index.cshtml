@@ -7,9 +7,12 @@
         var viewModel;
 
         $(document).ready(function () {
-
             viewModel = {
                 resultado: ko.observableArray([]),
+                melhorVolta: ko.observableArray([]),
+                velocidadeMedia: ko.observableArray([]),
+                melhorVoltaCorrida: ko.observable(),
+                
                 tableVisible: ko.observable(false)
             };
             
@@ -20,12 +23,27 @@
             
             $.ajax({
                 type: "POST",
-                url: "Upload/LoadDefaultLog",
+                url: "Upload/CarregarArquivoPadrao",
                 success: function (data) {
                     debugger;
-                    //var myObj = JSON.parse(data)
+                    
                     viewModel.tableVisible(true);
+
+                    var melhoresVoltas = [];
+                    for (var i = 0; i < data.length; i++) {
+                        melhoresVoltas.push(data[i].MelhorVolta);
+                    }
+
+                    var velocidadeMediaTodaCorrida = [];
+                    for (var i = 0; i < data.length; i++) {
+                        velocidadeMediaTodaCorrida.push(data[i].VelocidadeMedia);
+                    }
+
                     viewModel.resultado(data);
+                    viewModel.melhorVolta(melhoresVoltas);
+                    viewModel.melhorVoltaCorrida(data[0].MelhorVoltaCorrida);
+                    viewModel.velocidadeMedia(velocidadeMediaTodaCorrida);
+                    
                 },
                 error: function () {
                     alert("Erro ao carregar arquivo log padrão teste");
@@ -56,7 +74,7 @@
             <br />
             <div class="row">
                 <section>
-                    <form method="post" enctype="multipart/form-data" asp-controller="Upload" asp-action="UploadFile">
+                    <form method="post" enctype="multipart/form-data" asp-controller="Upload" asp-action="CarregarArquivo">
                         <div class="form-group">
                             <div class="col-md-10">
                                 <p>Enviar arquivo log de corrida: </p>
@@ -78,6 +96,7 @@
     </div>
 
     <div>
+        <h4 data-bind="visible: viewModel.tableVisible">Podio</h4>
         <table id="tableResult" data-bind="visible: viewModel.tableVisible" class="table">
             <thead>
                 <tr>
@@ -86,6 +105,7 @@
                     <th>Nome Piloto</th>
                     <th>Qtde Voltas Completadas</th>
                     <th>Tempo Total de Prova</th>
+
                 </tr>
             </thead>
             <tbody data-bind="foreach: viewModel.resultado">
@@ -98,5 +118,79 @@
                 </tr>
             </tbody>
         </table>
+        <br />
+        <h2 data-bind="visible: viewModel.tableVisible">Bonus: </h2>
+        <br />
+        <h4 data-bind="visible: viewModel.tableVisible">Melhor volta de cada piloto</h4>
+        <table id="tableResult" data-bind="visible: viewModel.tableVisible" class="table">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Numero Piloto</th>
+                    <th>Nome Piloto</th>
+                    <th>Volta</th>
+                    <th>Tempo Volta</th>
+                    <th>Velocidade Media</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: viewModel.melhorVolta">
+                <tr>
+                    <td data-bind="text:Hora"></td>
+                    <td data-bind="text:NumeroPiloto"></td>
+                    <td data-bind="text:NomePiloto"></td>
+                    <td data-bind="text:Volta"></td>
+                    <td data-bind="text:TempoVolta"></td>
+                    <td data-bind="text:VelocidadeMediaVolta"></td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+
+        <h4 data-bind="visible: viewModel.tableVisible">Melhor volta da corrida</h4>
+
+        <table id="tableResult" data-bind="visible: viewModel.tableVisible" class="table">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Numero Piloto</th>
+                    <th>Nome Piloto</th>
+                    <th>Volta</th>
+                    <th>Tempo Volta</th>
+                    <th>Velocidade Media</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: viewModel.melhorVoltaCorrida">
+                <tr>
+                    <td data-bind="text:Hora"></td>
+                    <td data-bind="text:NumeroPiloto"></td>
+                    <td data-bind="text:NomePiloto"></td>
+                    <td data-bind="text:Volta"></td>
+                    <td data-bind="text:TempoVolta"></td>
+                    <td data-bind="text:VelocidadeMediaVolta"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4 data-bind="visible: viewModel.tableVisible">Velocidade Media Toda Corrida</h4>
+
+        <table id="tableResult" data-bind="visible: viewModel.tableVisible" class="table">
+            <thead>
+                <tr>
+                    
+                    <th>Numero Piloto</th>
+                    <th>Velocidade</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: viewModel.velocidadeMedia">
+                <tr>
+                    <td data-bind="text:NomePiloto"></td>
+                    <td data-bind="text:Velocidade"></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
     </div>
 

@@ -8,6 +8,6 @@ namespace gympass.Interfaces
 {
     public interface ICorridaService
     {
-        Task<List<ResultadoCorrida>> ApresentarResultadoCorrida(List<KartRacing> kartRacings);
+        Task<List<ResultadoCorrida>> ApresentarResultadoCorrida(List<RegistroCorrida> kartRacings);
     }
 }

@@ -8,16 +8,17 @@ using System.Threading.Tasks;
 
 namespace gympass.Services
 {
-    public class KartService : IKartService
+    public class RegistroCorridaService : IRegistroCorridaService
     {
         private string colunasIncorretas = string.Empty;
-        private int colunasArquivo = 6;
+        private const int colunasArquivo = 6;
+        private const int timeSpanIncompleto = 8;
 
-        public async Task<List<KartRacing>> ObterKartLista(string[] registros)
+        public async Task<List<RegistroCorrida>> ObterRegistrosCorrida(string[] registros)
         {
             try
             {
-                return Task.FromResult(PrepararListaKarts(registros)).Result;
+                return await Task.FromResult(PrepararListaRegistros(registros));
             }
             catch (Exception ex)
             {
@@ -25,11 +26,11 @@ namespace gympass.Services
             }
         }
 
-        private List<KartRacing> PrepararListaKarts(string[] registrosArquivo)
+        private List<RegistroCorrida> PrepararListaRegistros(string[] registrosArquivo)
         {
             try
             {
-                List<KartRacing> kartsRacing = new List<KartRacing>();
+                List<RegistroCorrida> registrosCorrida = new List<RegistroCorrida>();
 
                 for (int linhaTual = 1; linhaTual < registrosArquivo.Length; linhaTual++)
                 {
@@ -39,10 +40,10 @@ namespace gympass.Services
                     if(kartRegistros.Length != colunasArquivo)
                         throw new Exception("Formato do arquivo errado!");
 
-                    kartsRacing.Add(CriarKart(kartRegistros, linhaTual));
+                    registrosCorrida.Add(CriarRegistro(kartRegistros, linhaTual));
                 }
 
-                return kartsRacing;
+                return registrosCorrida;
             }
             catch (Exception)
             {
@@ -50,9 +51,9 @@ namespace gympass.Services
             }
         }
 
-        private KartRacing CriarKart(string[] kartRegistros, int linhaAtual)
+        private RegistroCorrida CriarRegistro(string[] kartRegistros, int linhaAtual)
         {
-            KartRacing kart = new KartRacing();
+            RegistroCorrida kart = new RegistroCorrida();
 
             for (int registro = 0; registro <= kartRegistros.Length; registro++)
             {
@@ -93,7 +94,7 @@ namespace gympass.Services
                         TimeSpan tempoVolta;
                         if (!TimeSpan.TryParse(kartRegistros[registro], out tempoVolta))
                         {
-                            if (kartRegistros[registro].Length == 8)
+                            if (kartRegistros[registro].Length == timeSpanIncompleto)
                             {
                                 tempoVolta = TimeSpan.Parse("00:0" + kartRegistros[registro]);
                             }
@@ -138,7 +139,7 @@ namespace gympass.Services
                 return false;
         }
 
-        private bool VerificaKartEstaValido(KartRacing kart)
+        private bool VerificaKartEstaValido(RegistroCorrida kart)
         {
             string colunasIncorretas = string.Empty;
 

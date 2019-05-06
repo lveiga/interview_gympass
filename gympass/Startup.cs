@@ -33,7 +33,8 @@ namespace gympass
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             services.AddScoped<ICorridaService, CorridaService>();
-            services.AddScoped<IKartService, KartService>();
+            services.AddScoped<IRegistroCorridaService, RegistroCorridaService>();
+            services.AddScoped<IBonusService, BonusService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

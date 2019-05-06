@@ -10,43 +10,43 @@ using System.Text;
 namespace gympass_test
 {
     [TestFixture]
-    public class KartServiceTest
+    public class RegistroServiceTest
     {
-        private IKartService _kartService;
+        private IRegistroCorridaService _registroCorridaService;
 
-        public KartServiceTest()
+        public RegistroServiceTest()
         {
-            _kartService = new KartService();
+            _registroCorridaService = new RegistroCorridaService();
             
         }
 
         [Test]
-        public void RetornaListaKartCorretamentDadoArquivoLog()
+        public void DeveRetornarListaRegistroCorretamentDadoArquivoLog()
         {
             string[] linhas = ObterTextoLogCorridaTeste().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            var resultado = _kartService.ObterKartLista(linhas).Result;
+            var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
 
             Assert.IsTrue(resultado.Count > 0);
         }
 
         [Test]
-        public void ReturnoListaZeradaDadoNenhumRegistroEncontradoNoArquivo()
+        public void DeveRetornarListaZeradaDadoNenhumRegistroEncontradoNoArquivo()
         {
             var registrosNulos = new string[0];
-            var resultado = _kartService.ObterKartLista(registrosNulos);
+            var resultado = _registroCorridaService.ObterRegistrosCorrida(registrosNulos);
 
             Assert.IsFalse(resultado.Result.Count > 0);
         }
 
         [Test]
-        public void RetornarExcecaoDadoRegistrosSemRetirarCaracteresEspeciais()
+        public void DeveRetornarExcecaoDadoRegistrosSemRetirarCaracteresEspeciais()
         {
             string[] linhas = ObterTextoLogCorridaTesteComCaracterEspecial().Split(new[] { Environment.NewLine },StringSplitOptions.None);
             Exception expectedExcetpion = null;
 
             try
             {
-                var resultado = _kartService.ObterKartLista(linhas).Result;
+                var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
             }
             catch (Exception ex)
             {
@@ -57,14 +57,14 @@ namespace gympass_test
         }
 
         [Test]
-        public void RetornaErroArquivoDadoArquivoComFormatoErrado()
+        public void DeveRetornaErroArquivoDadoArquivoComFormatoErrado()
         {
             string[] linhas = ObterTextoLogCorridaSemVoltasTeste().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             Exception expectedExcetpion = null;
 
             try
             {
-                var resultado = _kartService.ObterKartLista(linhas).Result;
+                var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
             }
             catch (Exception ex)
             {
@@ -75,14 +75,14 @@ namespace gympass_test
         }
 
         [Test]
-        public void RetornaErroArquivoComHoraErradoDadoLogComHoraErrada()
+        public void DeveRetornaErroArquivoComHoraErradoDadoLogComHoraErrada()
         {
             string[] linhas = ObterTextoLogCorridaTesteComHoraErrada().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             Exception expectedExcetpion = null;
 
             try
             {
-                var resultado = _kartService.ObterKartLista(linhas).Result;
+                var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
             }
             catch (Exception ex)
             {
@@ -93,14 +93,14 @@ namespace gympass_test
         }
 
         [Test]
-        public void RetornaErroArquivoComNumeroPilotoErradoDadoLogComNumeroPilotoErrado()
+        public void DeveRetornaErroArquivoComNumeroPilotoErradoDadoLogComNumeroPilotoErrado()
         {
             string[] linhas = ObterTextoLogCorridaTesteComNumeroPilotoErrado().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             Exception expectedExcetpion = null;
 
             try
             {
-                var resultado = _kartService.ObterKartLista(linhas).Result;
+                var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
             }
             catch (Exception ex)
             {
@@ -111,14 +111,14 @@ namespace gympass_test
         }
 
         [Test]
-        public void RetornaErroArquivoComVoltaErradaDadoLogComVoltaErrado()
+        public void DeveRetornaErroArquivoComVoltaErradaDadoLogComVoltaErrado()
         {
             string[] linhas = ObterTextoLogCorridaTesteComVoltaErrada().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             Exception expectedExcetpion = null;
 
             try
             {
-                var resultado = _kartService.ObterKartLista(linhas).Result;
+                var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
             }
             catch (Exception ex)
             {
@@ -129,14 +129,14 @@ namespace gympass_test
         }
 
         [Test]
-        public void RetornaErroArquivoComTempoVoltaErradaDadoLogComTempoVoltaErrado()
+        public void DeveRetornaErroArquivoComTempoVoltaErradaDadoLogComTempoVoltaErrado()
         {
             string[] linhas = ObterTextoLogCorridaTesteComTempoVoltaErrada().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             Exception expectedExcetpion = null;
 
             try
             {
-                var resultado = _kartService.ObterKartLista(linhas).Result;
+                var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
             }
             catch (Exception ex)
             {
@@ -144,6 +144,24 @@ namespace gympass_test
             }
 
             Assert.IsTrue(expectedExcetpion.Message.Contains("Campo tempoVolta no Formato Errado!"));
+        }
+
+        [Test]
+        public void DeveRetornaErroArquivoFormatoIncorretoDadoArquivoComErroFormatacao()
+        {
+            string[] linhas = ObterTextoLogCorridaFormatoIncorreto().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            Exception expectedExcetpion = null;
+
+            try
+            {
+                var resultado = _registroCorridaService.ObterRegistrosCorrida(linhas).Result;
+            }
+            catch (Exception ex)
+            {
+                expectedExcetpion = ex;
+            }
+            Assert.IsNotNull(expectedExcetpion);
+            Assert.IsTrue(expectedExcetpion.Message.Contains("Formato do arquivo errado!"));
         }
 
 
@@ -233,7 +251,17 @@ namespace gympass_test
                         23:49:08.277      038\u0096  F.MASSA                           1		\t\t1:02.852                        44,275";
         }
 
-        
-        
+        private string ObterTextoLogCorridaFormatoIncorreto()
+        {
+            return @"Hora                               Piloto              Tempo Volta       Velocidade média da volta
+                        23:49:08.277      038  F.MASSA                    1:02.852                        44,275
+                        23:50:15.057                                                                     43,493
+                        23:50:17.472      023  M.WEBBER                   1:04.805                        42,941
+                        23:50:37.987      015  F.ALONSO                   1:07.011			               41,528
+                        23:51:14.216      038  F.MASSA                    1:02.769                        44,334
+                        23:51:18.576      033  R.BARRICHELLO		       1:03.716                        43,675
+        ";
+        }
+
     }
 }
